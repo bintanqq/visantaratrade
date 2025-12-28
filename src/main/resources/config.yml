@@ -1,0 +1,86 @@
+# VisantaraTrade Configuration
+# Plugin by Bintanq
+
+settings:
+  # Maximum distance between players to trade (in blocks) set to -1 to disabke
+  max-distance: -1
+
+  # Completion Countdown when completing trades
+  completion-countdown: 3
+
+  # Cooldown between sending trade requests (in seconds)
+  cooldown-seconds: 30
+
+  # How long trade requests last before expiring (in seconds)
+  request-expiry-seconds: 30
+
+  # Money increment when clicking money buttons
+  money-increment: 100.0
+
+  # Drop items on ground if inventory is full
+  # If false, trade will be cancelled if inventory is full
+  drop-items-on-full-inventory: false
+
+  # Worlds where trading is disabled
+  blacklisted-worlds:
+    - world_nether_disabled
+    - world_the_end_disabled
+
+  # Items that cannot be traded (by Material name)
+  blacklisted-items:
+    - BEDROCK
+    - BARRIER
+    - COMMAND_BLOCK
+    - COMMAND_BLOCK_MINECART
+    - STRUCTURE_BLOCK
+    - STRUCTURE_VOID
+
+# Sound effects for various actions
+sounds:
+  TRADE_OPEN:
+    enabled: true
+    sound: BLOCK_CHEST_OPEN
+    volume: 1.0
+    pitch: 1.0
+
+  REQUEST_RECEIVED:
+    enabled: true
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 1.0
+    pitch: 1.2
+
+  ITEM_ADD:
+    enabled: true
+    sound: ENTITY_ITEM_PICKUP
+    volume: 0.5
+    pitch: 1.0
+
+  ITEM_REMOVE:
+    enabled: true
+    sound: ENTITY_ITEM_PICKUP
+    volume: 0.5
+    pitch: 0.8
+
+  MONEY_CHANGE:
+    enabled: true
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.5
+    pitch: 1.5
+
+  READY:
+    enabled: true
+    sound: BLOCK_NOTE_BLOCK_PLING
+    volume: 1.0
+    pitch: 2.0
+
+  TRADE_SUCCESS:
+    enabled: true
+    sound: ENTITY_PLAYER_LEVELUP
+    volume: 1.0
+    pitch: 1.0
+
+  TRADE_CANCEL:
+    enabled: true
+    sound: ENTITY_PLAYER_LEVELUP
+    volume: 1.0
+    pitch: 1.0

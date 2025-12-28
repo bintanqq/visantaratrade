@@ -1,0 +1,104 @@
+gui:
+  title: "&bTrade: &a{player1} &7<-> &a{player2}"
+  size: 54
+
+  player1-slots:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 9
+    - 10
+    - 11
+    - 12
+    - 18
+    - 19
+    - 20
+    - 21
+    - 27
+    - 28
+    - 29
+    - 30
+    - 36
+    - 37
+    - 38
+    - 39
+
+  player2-slots:
+    - 5
+    - 6
+    - 7
+    - 8
+    - 14
+    - 15
+    - 16
+    - 17
+    - 23
+    - 24
+    - 25
+    - 26
+    - 32
+    - 33
+    - 34
+    - 35
+    - 41
+    - 42
+    - 43
+    - 44
+
+  filler-slots:
+    - 4
+    - 13
+    - 22
+    - 31
+    - 40
+
+  player1-ready-slot: 45
+  player1-money-slot: 46
+  player1-add-money-slot: 47
+  player1-remove-money-slot: 48
+
+  trade-info-slot: 49
+
+  player2-remove-money-slot: 50
+  player2-add-money-slot: 51
+  player2-money-slot: 52
+  player2-ready-slot: 53
+
+  items:
+    filler:
+      material: WHITE_STAINED_GLASS_PANE
+      name: "&7"
+      lore: []
+    not-ready:
+      material: RED_STAINED_GLASS_PANE
+      name: "&c&lNot Ready"
+      lore:
+        - "&7Click to mark yourself as ready"
+    ready:
+      material: LIME_STAINED_GLASS_PANE
+      name: "&a&lReady!"
+      lore:
+        - "&7Waiting for other player..."
+    money-display:
+      material: GOLD_INGOT
+      name: "&6&lMoney Offered: &e${amount}"
+      lore:
+        - "&7Current offer in trade"
+    add-money:
+      material: LIME_DYE
+      name: "&a&l+ Add Money"
+      lore:
+        - "&7Left-Click: &a+$100"
+        - "&7Shift-Click: &a+$1000"
+    remove-money:
+      material: RED_DYE
+      name: "&c&l- Remove Money"
+      lore:
+        - "&7Left-Click: &c-$100"
+        - "&7Shift-Click: &c-$1000"
+    trade-info:
+      material: PLAYER_HEAD
+      name: "&6&lTrading with: &e{player}"
+      lore:
+        - "&7Place items in your slots"

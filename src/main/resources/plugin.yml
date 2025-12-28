@@ -1,0 +1,52 @@
+name: VisantaraTrade
+version: 1.0.0
+main: me.bintanq.visantaraTrade.VisantaraTrade
+api-version: 1.21
+author: Bintanq
+description: Advanced trading system for Minecraft servers
+website: https://github.com/bintanq/visantaratrade
+
+depend:
+  - Vault
+
+softdepend: []
+
+commands:
+  visantaratrade:
+    description: Main trade command
+    usage: /<command> <player>
+    aliases: [vtrade]
+
+  trade:
+    description: Trade with another player
+    usage: /<command> <player>
+
+  pay:
+    description: Send money to another player
+    usage: /<command> <player> <amount>
+    aliases: [sendmoney]
+
+permissions:
+  visantara.trade.*:
+    description: Gives access to all trade permissions
+    children:
+      visantara.trade.use: true
+      visantara.trade.toggle: true
+      visantara.trade.admin: true
+      visantara.pay: true
+
+  visantara.trade.use:
+    description: Allows player to trade with others
+    default: true
+
+  visantara.trade.toggle:
+    description: Allows player to toggle trade requests
+    default: true
+
+  visantara.trade.admin:
+    description: Admin permissions (bypass cooldown, view logs)
+    default: op
+
+  visantara.pay:
+    description: Allows player to send money to others
+    default: true

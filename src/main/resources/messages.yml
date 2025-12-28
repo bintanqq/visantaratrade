@@ -1,0 +1,81 @@
+# VisantaraTrade Messages
+# Color codes: &0-9, &a-f, &l (bold), &o (italic), &n (underline), &m (strikethrough)
+
+# Prefix untuk semua pesan
+prefix: "&8[&bVisantara&3Trade&8] &r"
+
+trade:
+  # Pesan Request
+  request-sent: "&aPermintaan trade telah dikirim ke &b{player}"
+  request-received: "&b{player} &aingin trade denganmu! &7Ketik &b/trade accept &7untuk menerima"
+  request-expired: "&cPermintaan trade kamu telah kedaluwarsa"
+  request-expired-target: "&cPermintaan trade untukmu telah kedaluwarsa"
+  request-denied-self: "&cKamu menolak permintaan trade"
+  request-denied: "&b{player} &cmenolak permintaan trademu"
+  request-already-sent: "&cKamu sudah mengirim permintaan trade, tunggu sampai direspon"
+
+  # Status Trade
+  completed: "&aTrade berhasil diselesaikan!"
+  completed-title: "&aTrade Berhasil"
+  completed-title-subtitle: "&7Barang telah ditukarkan"
+
+  # Summary Trade
+  completed-details-header: "&3&m          &r &bRingkasan Trade &3&m          "
+  completed-details-you-gave: "&7Kamu memberi: &b{count} item &7& &b${money} &8(Hover detail)"
+  completed-details-you-received: "&7Kamu menerima: &b{count} item &7& &b${money} &8(Hover detail)"
+  completed-details-footer: "&3&m                                      "
+  hover-title: "&bDaftar Barang:"
+  hover-nothing: "&cKosong"
+
+  cancelled: "&cTrade dibatalkan, barangmu telah dikembalikan"
+
+  # Pesan Error
+  no-permission: "&cKamu tidak punya izin untuk melakukan ini"
+  player-not-found: "&cPlayer &b{player} &ctidak sedang online"
+  cannot-trade-self: "&cKamu tidak bisa trade dengan dirimu sendiri"
+  already-trading: "&cKamu sedang dalam sesi trade"
+  target-already-trading: "&cPlayer tersebut sedang trade dengan orang lain"
+  too-far: "&cJarak terlalu jauh atau kamu berbeda dunia"
+  world-disabled: "&cFitur trade dimatikan di dunia ini"
+  cooldown: "&cTunggu &b{time} detik &clagi untuk mengirim permintaan"
+  no-request: "&cTidak ada permintaan trade dari player tersebut"
+  no-pending-requests: "&cKamu tidak memiliki permintaan trade yang tertunda"
+  target-disabled: "&cPlayer tersebut menonaktifkan fitur trade"
+  toggle-is-off: "&cKamu tidak bisa trade saat fitur kamu sedang nonaktif"
+
+  inventory-full: "&cTrade gagal, inventory salah satu player penuh"
+  insufficient-funds: "&cTrade gagal, saldo tidak mencukupi"
+  item-blacklisted: "&cBarang tersebut dilarang untuk di-trade"
+
+  # Pesan Toggle
+  toggle-enabled: "&aKamu telah mengaktifkan permintaan trade"
+  toggle-disabled: "&cKamu telah menonaktifkan permintaan trade"
+
+  # Log System Messages
+  logs-header: "&3&m          &r &bTrade Logs: {player} &7({page}/{max}) &3&m          "
+  logs-footer: "&3&m                                                  "
+  logs-prefix-pay: "&a[PAY] "
+  logs-prefix-trade: "&b[TRADE] "
+  logs-format: "&8- {prefix}&b{time} &f{p1} &7↔ &f{p2} &b&o(Hover)"
+
+  countdown: "&aTrade akan selesai dalam &b{time}s"
+  reload-success: "&aKonfigurasi berhasil dimuat ulang!"
+
+  help-message:
+    - "&3&m          &r &bVisantaraTrade Help &3&m          "
+    - "&b/trade <player> &7- Kirim permintaan trade"
+    - "&b/trade accept &7- Terima permintaan trade"
+    - "&b/trade deny &7- Tolak permintaan trade"
+    - "&b/trade toggle &7- Aktif/Nonaktifkan trade"
+    - "&b/trade logs <player> [page] &7- Cek log transaksi"
+    - "&b/trade reload &7- Muat ulang konfigurasi"
+    - "&3&m                                              "
+
+# Pay command messages
+pay:
+  sent: "&aBerhasil mengirim &b${amount} &ake &b{player}"
+  received: "&aKamu menerima &b${amount} &adari &b{bplayer}"
+  insufficient-funds: "&cSaldo tidak cukup! Butuh: &b${amount}"
+  invalid-amount: "&cJumlah tidak valid"
+  self-pay: "&cKamu tidak bisa mengirim uang ke diri sendiri"
+  no-permission: "&cKamu tidak punya izin untuk perintah ini"
