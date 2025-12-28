@@ -2,7 +2,7 @@ name: VisantaraTrade
 version: 1.0.0
 main: me.bintanq.visantaraTrade.VisantaraTrade
 api-version: 1.21
-author: Bintanq
+author: bintanq
 description: Advanced trading system for Minecraft servers
 website: https://github.com/bintanq/visantaratrade
 

@@ -157,6 +157,9 @@ public class TradeSession {
         completed = true;
         isEnding = true;
 
+        returnCursorItem(player1);
+        returnCursorItem(player2);
+
         Bukkit.getScheduler().runTask(plugin, () -> {
             plugin.getDatabaseManager().logTrade(this);
 
@@ -175,6 +178,17 @@ public class TradeSession {
             plugin.getMessageManager().sendSound(player2, "TRADE_SUCCESS");
             plugin.getTradeManager().removeSession(this);
         });
+    }
+
+    private void returnCursorItem(Player player) {
+        ItemStack cursorItem = player.getItemOnCursor();
+        if (cursorItem != null && cursorItem.getType() != Material.AIR) {
+            Map<Integer, ItemStack> leftover = player.getInventory().addItem(cursorItem);
+            if (!leftover.isEmpty()) {
+                leftover.values().forEach(item -> player.getWorld().dropItemNaturally(player.getLocation(), item));
+            }
+            player.setItemOnCursor(null);
+        }
     }
 
     public void cancel() {

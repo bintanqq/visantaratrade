@@ -7,7 +7,7 @@ prefix: "&8[&bVisantara&3Trade&8] &r"
 trade:
   # Pesan Request
   request-sent: "&aPermintaan trade telah dikirim ke &b{player}"
-  request-received: "&b{player} &aingin trade denganmu! &7Ketik &b/trade accept &7untuk menerima"
+  request-received: "&b{player} &aingin trade denganmu! &7Ketik &b/trade accept &7untuk menerima, &b/trade deny &7untuk menolak"
   request-expired: "&cPermintaan trade kamu telah kedaluwarsa"
   request-expired-target: "&cPermintaan trade untukmu telah kedaluwarsa"
   request-denied-self: "&cKamu menolak permintaan trade"

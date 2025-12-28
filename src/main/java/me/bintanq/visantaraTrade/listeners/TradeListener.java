@@ -13,6 +13,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Map;
+
 public class TradeListener implements Listener {
 
     private final VisantaraTrade plugin;
@@ -129,7 +131,17 @@ public class TradeListener implements Listener {
         if (!(e.getPlayer() instanceof Player player)) return;
         TradeSession session = plugin.getTradeManager().getSession(player);
         if (session != null && e.getInventory().equals(session.getGui())) {
-            if (!session.isCompleted()) session.cancel();
+            if (!session.isCompleted()) {
+                ItemStack cursorItem = e.getView().getCursor();
+                if (cursorItem != null && cursorItem.getType() != Material.AIR) {
+                    Map<Integer, ItemStack> leftover = player.getInventory().addItem(cursorItem);
+                    if (!leftover.isEmpty()) {
+                        leftover.values().forEach(item -> player.getWorld().dropItemNaturally(player.getLocation(), item));
+                    }
+                    e.getView().setCursor(null);
+                }
+                session.cancel();
+            }
         }
     }
 
