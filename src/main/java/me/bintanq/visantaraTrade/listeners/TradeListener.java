@@ -100,12 +100,21 @@ public class TradeListener implements Listener {
     }
 
     private boolean handleButtons(Player player, TradeSession session, int slot, InventoryClickEvent e) {
+        boolean isReady = plugin.getGuiManager().isReadySlot(slot);
+        boolean isMoney = plugin.getGuiManager().isMoneyControlSlot(slot);
+        boolean isFiller = plugin.getGuiManager().isFillerSlot(slot);
+        boolean isInfo = plugin.getGuiManager().isTradeInfoSlot(slot);
+
+        if (!isReady && !isMoney && !isFiller && !isInfo) {
+            return false;
+        }
+
         ItemStack cursorItem = e.getCursor();
         if (cursorItem != null && cursorItem.getType() != Material.AIR) {
             return true;
         }
 
-        if (plugin.getGuiManager().isReadySlot(slot)) {
+        if (isReady) {
             if (session.isLocked()) return true;
             boolean isP1ReadySlot = plugin.getGuiManager().isPlayer1ReadySlot(slot);
             if ((isP1ReadySlot && player.equals(session.getPlayer1())) ||
@@ -115,7 +124,8 @@ public class TradeListener implements Listener {
             return true;
         }
 
-        if (plugin.getGuiManager().isMoneyControlSlot(slot)) {
+        if (isMoney) {
+            if (session.isLocked()) return true;
             boolean isP1Control = plugin.getGuiManager().isPlayer1MoneyControl(slot);
             if ((isP1Control && player.equals(session.getPlayer1())) ||
                     (!isP1Control && player.equals(session.getPlayer2()))) {
@@ -129,7 +139,7 @@ public class TradeListener implements Listener {
             return true;
         }
 
-        return plugin.getGuiManager().isFillerSlot(slot) || plugin.getGuiManager().isTradeInfoSlot(slot);
+        return true;
     }
 
     @EventHandler
