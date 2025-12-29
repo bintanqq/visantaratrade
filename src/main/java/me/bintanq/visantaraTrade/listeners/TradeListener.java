@@ -34,7 +34,7 @@ public class TradeListener implements Listener {
         Inventory clickedInv = e.getClickedInventory();
         if (clickedInv == null) return;
 
-        if (e.getClick() == ClickType.SHIFT_LEFT || e.getClick() == ClickType.SHIFT_RIGHT) {
+        if (e.getClick() == ClickType.SHIFT_LEFT || e.getClick() == ClickType.SHIFT_RIGHT || e.getClick() == ClickType.NUMBER_KEY) {
             e.setCancelled(true);
             return;
         }
@@ -100,7 +100,13 @@ public class TradeListener implements Listener {
     }
 
     private boolean handleButtons(Player player, TradeSession session, int slot, InventoryClickEvent e) {
+        ItemStack cursorItem = e.getCursor();
+        if (cursorItem != null && cursorItem.getType() != Material.AIR) {
+            return true;
+        }
+
         if (plugin.getGuiManager().isReadySlot(slot)) {
+            if (session.isLocked()) return true;
             boolean isP1ReadySlot = plugin.getGuiManager().isPlayer1ReadySlot(slot);
             if ((isP1ReadySlot && player.equals(session.getPlayer1())) ||
                     (!isP1ReadySlot && player.equals(session.getPlayer2()))) {
@@ -147,7 +153,11 @@ public class TradeListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
+        Player player = e.getPlayer();
         TradeSession session = plugin.getTradeManager().getSession(e.getPlayer());
-        if (session != null) session.cancel();
+        if (session != null) {
+            player.setItemOnCursor(null);
+            session.cancel();
+        }
     }
 }
