@@ -61,8 +61,13 @@ public class TradeCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (args.length >= 2 && args[0].equalsIgnoreCase("logs")) {
+        if (args.length >= 1 && args[0].equalsIgnoreCase("logs")) {
             if (!player.hasPermission("visantara.trade.admin")) return noPerm(player);
+
+            if (args.length < 2) {
+                player.sendMessage(plugin.getMessageManager().colorize("&cUsage: /trade logs <player> [page]"));
+                return true;
+            }
 
             String targetName = args[1];
             int page = (args.length == 3) ? parsePage(args[2]) : 1;

@@ -49,14 +49,9 @@ public class PayCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        double amount;
-        try {
-            amount = Double.parseDouble(args[1]);
-            if (amount <= 0) {
-                plugin.getMessageManager().send(player, "pay.invalid-amount");
-                return true;
-            }
-        } catch (NumberFormatException e) {
+        double amount = parseMoney(args[1]);
+
+        if (amount <= 0) {
             plugin.getMessageManager().send(player, "pay.invalid-amount");
             return true;
         }
@@ -72,18 +67,86 @@ public class PayCommand implements CommandExecutor, TabCompleter {
 
         plugin.getDatabaseManager().logPay(player, target, amount);
 
-        plugin.getMessageManager().send(player, "pay.sent", Map.of("amount", String.format("%.2f", amount), "player", target.getName()));
-        plugin.getMessageManager().send(target, "pay.received", Map.of("amount", String.format("%.2f", amount), "player", player.getName()));
+        String formattedAmount = formatMoney(amount);
+
+        plugin.getMessageManager().send(player, "pay.sent", Map.of(
+                "amount", formattedAmount,
+                "player", target.getName()
+        ));
+
+        plugin.getMessageManager().send(target, "pay.received", Map.of(
+                "amount", formattedAmount,
+                "player", player.getName()
+        ));
         plugin.getMessageManager().sendSound(player, "MONEY_CHANGE");
         plugin.getMessageManager().sendSound(target, "MONEY_CHANGE");
 
         return true;
     }
 
+    private double parseMoney(String input) {
+        try {
+            input = input.toLowerCase();
+            double multiplier = 1.0;
+
+            if (input.endsWith("k")) {
+                multiplier = 1_000.0;
+                input = input.replace("k", "");
+            } else if (input.endsWith("m")) {
+                multiplier = 1_000_000.0;
+                input = input.replace("m", "");
+            } else if (input.endsWith("b")) {
+                multiplier = 1_000_000_000.0;
+                input = input.replace("b", "");
+            }
+
+            return Double.parseDouble(input) * multiplier;
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    private String formatMoney(double amount) {
+        if (amount >= 1_000_000_000) {
+            return String.format("%.1fB", amount / 1_000_000_000.0).replace(".0", "");
+        } else if (amount >= 1_000_000) {
+            return String.format("%.1fM", amount / 1_000_000.0).replace(".0", "");
+        } else if (amount >= 1_000) {
+            return String.format("%.1fK", amount / 1_000.0).replace(".0", "");
+        }
+        return String.format("%.2f", amount);
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender s, Command c, String a, String[] args) {
-        if (args.length == 1) return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(n -> n.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
-        if (args.length == 2) return List.of("100", "500", "1000").stream().filter(am -> am.startsWith(args[1])).collect(Collectors.toList());
+        if (args.length == 1) {
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(Player::getName)
+                    .filter(n -> n.toLowerCase().startsWith(args[0].toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        if (args.length == 2) {
+            String input = args[1].toLowerCase();
+            List<String> suggestions = new ArrayList<>();
+
+            if (input.isEmpty()) {
+                return List.of("100", "1k", "10k", "1m");
+            }
+
+            if (input.matches("^[0-9.]+$")) {
+                suggestions.add(input + "k");
+                suggestions.add(input + "m");
+                suggestions.add(input + "b");
+            } else {
+                List.of("100", "1k", "10k", "1m", "10m").forEach(sug -> {
+                    if (sug.startsWith(input)) suggestions.add(sug);
+                });
+            }
+
+            return suggestions;
+        }
+
         return new ArrayList<>();
     }
 }
