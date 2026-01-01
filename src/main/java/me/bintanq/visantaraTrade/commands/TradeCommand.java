@@ -35,7 +35,7 @@ public class TradeCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-            if (!player.hasPermission("visantara.trade.admin")) return noPerm(player);
+            if (!player.hasPermission("visantara.trade.reload")) return noPerm(player);
             plugin.getConfigManager().reloadConfigs();
             plugin.getMessageManager().send(player, "trade.reload-success");
             return true;
@@ -254,12 +254,27 @@ public class TradeCommand implements CommandExecutor, TabCompleter {
             list.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
             return list.stream().filter(i -> i.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
         }
+
         if (args.length == 2 && args[0].equalsIgnoreCase("logs")) {
-            return Bukkit.getOnlinePlayers().stream()
+            List<String> suggestions = new ArrayList<>();
+
+            if (s.hasPermission("visantara.trade.admin")) {
+                suggestions.addAll(List.of("15m", "30m", "1h", "6h", "12h", "1d", "7d"));
+            }
+
+            suggestions.addAll(Bukkit.getOnlinePlayers().stream()
                     .map(Player::getName)
+                    .collect(Collectors.toList()));
+
+            return suggestions.stream()
                     .filter(n -> n.toLowerCase().startsWith(args[1].toLowerCase()))
                     .collect(Collectors.toList());
         }
+
+        if (args.length == 3 && args[0].equalsIgnoreCase("logs")) {
+            return List.of("1", "2", "3");
+        }
+
         return new ArrayList<>();
     }
 }

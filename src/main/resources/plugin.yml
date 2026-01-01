@@ -47,6 +47,10 @@ permissions:
     description: Admin permissions (bypass cooldown, view logs)
     default: op
 
+  visantara.trade.reload:
+    description: Admin permissions (reload)
+    default: op
+
   visantara.pay:
     description: Allows player to send money to others
     default: true
