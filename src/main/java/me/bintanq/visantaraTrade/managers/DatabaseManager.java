@@ -154,7 +154,7 @@ public class DatabaseManager {
 
                     stmt.setDouble(7, amount);
                     stmt.setDouble(8, 0.0);
-                    stmt.setString(9, LocalDateTime.now().toString());
+                    stmt.setString(9, java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(java.time.LocalDateTime.now()));
 
                     stmt.executeUpdate();
                 }

@@ -98,7 +98,9 @@ public class TradeCommand implements CommandExecutor, TabCompleter {
                     boolean isPay = log.getPlayer1Items().isEmpty() && log.getPlayer2Items().isEmpty();
                     String typePrefix = plugin.getConfigManager().getMessages().getString(isPay ? "trade.logs-prefix-pay" : "trade.logs-prefix-trade");
 
-                    String timeStr = log.getTimestamp().length() > 16 ? log.getTimestamp().substring(5, 16) : log.getTimestamp();
+                    String rawTime = log.getTimestamp();
+                    String cleanedTime = rawTime.replace("T", " ");
+                    String timeStr = cleanedTime.length() >= 16 ? cleanedTime.substring(5, 16) : cleanedTime;
 
                     String logLine = plugin.getConfigManager().getMessages().getString("trade.logs-format")
                             .replace("{prefix}", typePrefix)
