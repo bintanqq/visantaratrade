@@ -163,6 +163,15 @@ public class TradeSession {
         Bukkit.getScheduler().runTask(plugin, () -> {
             plugin.getDatabaseManager().logTrade(this);
 
+            if (player1Money > 0 && !plugin.getEconomy().has(player1, player1Money)) {
+                cancel();
+                return;
+            }
+            if (player2Money > 0 && !plugin.getEconomy().has(player2, player2Money)) {
+                cancel();
+                return;
+            }
+
             if (player1Money > 0) { plugin.getEconomy().withdrawPlayer(player1, player1Money); plugin.getEconomy().depositPlayer(player2, player1Money); }
             if (player2Money > 0) { plugin.getEconomy().withdrawPlayer(player2, player2Money); plugin.getEconomy().depositPlayer(player1, player2Money); }
 

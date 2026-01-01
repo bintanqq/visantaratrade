@@ -30,11 +30,19 @@ public class TradeListener implements Listener {
         TradeSession session = plugin.getTradeManager().getSession(player);
         if (session == null) return;
 
+        if (e.getAction() == InventoryAction.COLLECT_TO_CURSOR) {
+            e.setCancelled(true);
+            return;
+        }
+
         Inventory tradeGUI = session.getGui();
         Inventory clickedInv = e.getClickedInventory();
         if (clickedInv == null) return;
 
-        if (e.getClick() == ClickType.SHIFT_LEFT || e.getClick() == ClickType.SHIFT_RIGHT || e.getClick() == ClickType.NUMBER_KEY) {
+        if (e.getClick() == ClickType.SHIFT_LEFT ||
+                e.getClick() == ClickType.SHIFT_RIGHT ||
+                e.getClick() == ClickType.NUMBER_KEY ||
+                e.getClick() == ClickType.DOUBLE_CLICK) { // Tambahin Double Click buat jaga-jaga
             e.setCancelled(true);
             return;
         }

@@ -24,8 +24,6 @@ trade:
   completed-details-you-gave: "&7Kamu memberi: &b{count} item &7& &b${money} &8(Hover detail)"
   completed-details-you-received: "&7Kamu menerima: &b{count} item &7& &b${money} &8(Hover detail)"
   completed-details-footer: "&3&m                                      "
-  hover-title: "&bDaftar Barang:"
-  hover-nothing: "&cKosong"
 
   cancelled: "&cTrade dibatalkan, barangmu telah dikembalikan"
 
@@ -57,6 +55,12 @@ trade:
   logs-prefix-pay: "&a[PAY] "
   logs-prefix-trade: "&b[TRADE] "
   logs-format: "&8- {prefix}&b{time} &f{p1} &7↔ &f{p2} &b&o(Hover)"
+
+  hover-header: "&bDetail Transaksi:"
+  hover-player-gave: "&a{player} &7memberi:"
+  hover-item-format: " &8• &7{amount}x {item}"
+  hover-money-format: " &8• &a${money}"
+  hover-nothing: "&cKosong"
 
   countdown: "&aTrade akan selesai dalam &b{time}s"
   reload-success: "&aKonfigurasi berhasil dimuat ulang!"

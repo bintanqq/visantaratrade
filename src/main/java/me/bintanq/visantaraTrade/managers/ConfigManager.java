@@ -5,7 +5,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class ConfigManager {
 
@@ -21,41 +22,48 @@ public class ConfigManager {
 
     private void loadConfigs() {
         plugin.saveDefaultConfig();
+        plugin.getConfig().options().copyDefaults(true);
+        plugin.saveConfig();
         config = plugin.getConfig();
 
-        File messagesFile = new File(plugin.getDataFolder(), "messages.yml");
-        if (!messagesFile.exists()) {
-            plugin.saveResource("messages.yml", false);
-        }
-        messages = YamlConfiguration.loadConfiguration(messagesFile);
+        messages = loadAndSync("messages.yml");
+        gui = loadAndSync("gui.yml");
+    }
 
-        File guiFile = new File(plugin.getDataFolder(), "gui.yml");
-        if (!guiFile.exists()) {
-            plugin.saveResource("gui.yml", false);
+    private FileConfiguration loadAndSync(String fileName) {
+        File file = new File(plugin.getDataFolder(), fileName);
+
+        if (!file.exists()) {
+            plugin.saveResource(fileName, false);
         }
-        gui = YamlConfiguration.loadConfiguration(guiFile);
+
+        YamlConfiguration currentConfig = YamlConfiguration.loadConfiguration(file);
+
+        InputStream defaultStream = plugin.getResource(fileName);
+        if (defaultStream != null) {
+            YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream));
+
+            currentConfig.setDefaults(defaultConfig);
+            currentConfig.options().copyDefaults(true);
+
+            try {
+                currentConfig.save(file);
+            } catch (Exception e) {
+                plugin.getLogger().severe("Gagal mengupdate file " + fileName + ": " + e.getMessage());
+            }
+        }
+        return currentConfig;
     }
 
     public void reloadConfigs() {
-        plugin.reloadConfig();
-        config = plugin.getConfig();
+        loadConfigs();
 
-        File messagesFile = new File(plugin.getDataFolder(), "messages.yml");
-        messages = YamlConfiguration.loadConfiguration(messagesFile);
-
-        File guiFile = new File(plugin.getDataFolder(), "gui.yml");
-        gui = YamlConfiguration.loadConfiguration(guiFile);
+        if (plugin.getMessageManager() != null) {
+            plugin.getMessageManager().reload();
+        }
     }
 
-    public FileConfiguration getConfig() {
-        return config;
-    }
-
-    public FileConfiguration getMessages() {
-        return messages;
-    }
-
-    public FileConfiguration getGUIConfig() {
-        return gui;
-    }
+    public FileConfiguration getConfig() { return config; }
+    public FileConfiguration getMessages() { return messages; }
+    public FileConfiguration getGUIConfig() { return gui; }
 }

@@ -83,7 +83,7 @@ public class DatabaseManager {
 
                     stmt.setDouble(7, session.getPlayer1Money());
                     stmt.setDouble(8, session.getPlayer2Money());
-                    stmt.setString(9, LocalDateTime.now().toString());
+                    stmt.setString(9, java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()));
 
                     stmt.executeUpdate();
                 }
@@ -214,6 +214,37 @@ public class DatabaseManager {
 
     public interface TradeLogsCallback {
         void onLogsRetrieved(List<TradeLog> logs);
+    }
+
+    public void getGlobalTradeLogsByTime(String durationStr, TradeLogsCallback callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            List<TradeLog> logs = new ArrayList<>();
+            String timeModifier;
+            if (durationStr.endsWith("m")) timeModifier = "-" + durationStr.replace("m", "") + " minutes";
+            else if (durationStr.endsWith("h")) timeModifier = "-" + durationStr.replace("h", "") + " hours";
+            else if (durationStr.endsWith("d")) timeModifier = "-" + durationStr.replace("d", "") + " days";
+            else timeModifier = "-1 hours";
+
+            try {
+                String sql = "SELECT * FROM trade_logs WHERE timestamp >= datetime('now', ?, 'localtime') ORDER BY timestamp DESC";
+                try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                    stmt.setString(1, timeModifier);
+                    ResultSet rs = stmt.executeQuery();
+                    while (rs.next()) {
+                        logs.add(new TradeLog(
+                                rs.getInt("id"),
+                                UUID.fromString(rs.getString("player1_uuid")), rs.getString("player1_name"),
+                                UUID.fromString(rs.getString("player2_uuid")), rs.getString("player2_name"),
+                                deserializeItems(rs.getBytes("player1_items")), deserializeItems(rs.getBytes("player2_items")),
+                                rs.getDouble("player1_money"), rs.getDouble("player2_money"), rs.getString("timestamp")
+                        ));
+                    }
+                }
+            } catch (SQLException e) {
+                plugin.getLogger().severe("Failed to retrieve timed logs: " + e.getMessage());
+            }
+            Bukkit.getScheduler().runTask(plugin, () -> callback.onLogsRetrieved(logs));
+        });
     }
 
     public static class TradeLog {

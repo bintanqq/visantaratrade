@@ -65,16 +65,16 @@ public class TradeCommand implements CommandExecutor, TabCompleter {
             if (!player.hasPermission("visantara.trade.admin")) return noPerm(player);
 
             if (args.length < 2) {
-                player.sendMessage(plugin.getMessageManager().colorize("&cUsage: /trade logs <player> [page]"));
+                player.sendMessage(plugin.getMessageManager().colorize("&cUsage: /trade logs <player/time> [page]"));
                 return true;
             }
 
-            String targetName = args[1];
+            String input = args[1];
             int page = (args.length == 3) ? parsePage(args[2]) : 1;
 
-            plugin.getDatabaseManager().getTradeLogs(targetName, logs -> {
+            DatabaseManager.TradeLogsCallback displayLogs = logs -> {
                 if (logs.isEmpty()) {
-                    player.sendMessage(plugin.getMessageManager().colorize("&cNo logs found for " + targetName));
+                    player.sendMessage(plugin.getMessageManager().colorize("&cNo logs found for: " + input));
                     return;
                 }
 
@@ -85,7 +85,7 @@ public class TradeCommand implements CommandExecutor, TabCompleter {
                 }
 
                 String header = plugin.getConfigManager().getMessages().getString("trade.logs-header")
-                        .replace("{player}", targetName)
+                        .replace("{player}", input)
                         .replace("{page}", String.valueOf(page))
                         .replace("{max}", String.valueOf(maxPage));
                 plugin.getMessageManager().sendWithoutPrefix(player, header);
@@ -95,11 +95,10 @@ public class TradeCommand implements CommandExecutor, TabCompleter {
 
                 for (int i = start; i < end; i++) {
                     DatabaseManager.TradeLog log = logs.get(i);
-
                     boolean isPay = log.getPlayer1Items().isEmpty() && log.getPlayer2Items().isEmpty();
                     String typePrefix = plugin.getConfigManager().getMessages().getString(isPay ? "trade.logs-prefix-pay" : "trade.logs-prefix-trade");
 
-                    String timeStr = log.getTimestamp().replace("T", " ").substring(5, 16);
+                    String timeStr = log.getTimestamp().length() > 16 ? log.getTimestamp().substring(5, 16) : log.getTimestamp();
 
                     String logLine = plugin.getConfigManager().getMessages().getString("trade.logs-format")
                             .replace("{prefix}", typePrefix)
@@ -111,9 +110,14 @@ public class TradeCommand implements CommandExecutor, TabCompleter {
                     line.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(buildLogHover(log))));
                     player.spigot().sendMessage(line);
                 }
-
                 plugin.getMessageManager().sendWithoutPrefix(player, plugin.getConfigManager().getMessages().getString("trade.logs-footer"));
-            });
+            };
+
+            if (input.matches("\\d+[mhd]")) {
+                plugin.getDatabaseManager().getGlobalTradeLogsByTime(input, displayLogs);
+            } else {
+                plugin.getDatabaseManager().getTradeLogs(input, displayLogs);
+            }
             return true;
         }
 
@@ -173,23 +177,55 @@ public class TradeCommand implements CommandExecutor, TabCompleter {
     }
 
     private String buildLogHover(DatabaseManager.TradeLog log) {
-        StringBuilder sb = new StringBuilder("§6§lTransaction Details:\n");
-        sb.append("§e").append(log.getPlayer1Name()).append("§7 gave:\n");
-        appendItems(sb, log.getPlayer1Items(), log.getPlayer1Money());
-        sb.append("\n§e").append(log.getPlayer2Name()).append("§7 gave:\n");
-        appendItems(sb, log.getPlayer2Items(), log.getPlayer2Money());
+        var msgCfg = plugin.getConfigManager().getMessages();
+        StringBuilder sb = new StringBuilder();
+
+        // Header Hover
+        sb.append(plugin.getMessageManager().colorize(msgCfg.getString("trade.hover-header"))).append("\n");
+
+        // Player 1
+        sb.append(plugin.getMessageManager().colorize(msgCfg.getString("trade.hover-player-gave").replace("{player}", log.getPlayer1Name()))).append("\n");
+        appendItemsFromConfig(sb, log.getPlayer1Items(), log.getPlayer1Money());
+
+        sb.append("\n"); // Spasi antar player
+
+        // Player 2
+        sb.append(plugin.getMessageManager().colorize(msgCfg.getString("trade.hover-player-gave").replace("{player}", log.getPlayer2Name()))).append("\n");
+        appendItemsFromConfig(sb, log.getPlayer2Items(), log.getPlayer2Money());
+
         return sb.toString();
     }
 
-    private void appendItems(StringBuilder sb, List<ItemStack> items, double money) {
-        if (money > 0) sb.append(" §8• §a$").append(String.format("%.2f", money)).append("\n");
-        if (items.isEmpty() && money <= 0) sb.append(" §8• §7Nothing\n");
-        else {
+    private void appendItemsFromConfig(StringBuilder sb, List<ItemStack> items, double money) {
+        var msgCfg = plugin.getConfigManager().getMessages();
+
+        boolean empty = true;
+
+        if (money > 0) {
+            String moneyMsg = msgCfg.getString("trade.hover-money-format").replace("{money}", String.format("%.2f", money));
+            sb.append(plugin.getMessageManager().colorize(moneyMsg)).append("\n");
+            empty = false;
+        }
+
+        if (!items.isEmpty()) {
             for (ItemStack item : items) {
-                if (item == null) continue;
-                String name = item.hasItemMeta() && item.getItemMeta().hasDisplayName() ? item.getItemMeta().getDisplayName() : "§f" + item.getType().name().toLowerCase().replace("_", " ");
-                sb.append(" §8• §7").append(item.getAmount()).append("x ").append(name).append("\n");
+                if (item == null || item.getType().isAir()) continue;
+
+                String itemName = item.hasItemMeta() && item.getItemMeta().hasDisplayName()
+                        ? item.getItemMeta().getDisplayName()
+                        : "&f" + item.getType().name().toLowerCase().replace("_", " ");
+
+                String itemMsg = msgCfg.getString("trade.hover-item-format")
+                        .replace("{amount}", String.valueOf(item.getAmount()))
+                        .replace("{item}", itemName);
+
+                sb.append(plugin.getMessageManager().colorize(itemMsg)).append("\n");
+                empty = false;
             }
+        }
+
+        if (empty) {
+            sb.append(plugin.getMessageManager().colorize(msgCfg.getString("trade.hover-nothing"))).append("\n");
         }
     }
 

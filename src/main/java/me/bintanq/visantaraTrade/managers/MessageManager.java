@@ -92,4 +92,8 @@ public class MessageManager {
     public String getPrefix() {
         return prefix;
     }
+
+    public void reload() {
+        loadPrefix();
+    }
 }
