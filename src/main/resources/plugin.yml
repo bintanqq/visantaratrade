@@ -9,7 +9,8 @@ website: https://github.com/bintanq/visantaratrade
 depend:
   - Vault
 
-softdepend: []
+softdepend:
+  - ProtocolLib
 
 commands:
   visantaratrade:

@@ -165,14 +165,22 @@ public class DatabaseManager {
     }
 
     private byte[] serializeItems(List<ItemStack> items) {
+        if (items == null) items = new ArrayList<>();
+
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
              BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
 
             dataOutput.writeInt(items.size());
+
             for (ItemStack item : items) {
-                dataOutput.writeObject(item);
+                if (item != null) {
+                    dataOutput.writeObject(item);
+                } else {
+                    dataOutput.writeObject(new ItemStack(org.bukkit.Material.AIR));
+                }
             }
 
+            dataOutput.flush();
             return outputStream.toByteArray();
         } catch (Exception e) {
             plugin.getLogger().severe("Failed to serialize items: " + e.getMessage());
@@ -192,11 +200,16 @@ public class DatabaseManager {
 
             int size = dataInput.readInt();
             for (int i = 0; i < size; i++) {
-                items.add((ItemStack) dataInput.readObject());
+                try {
+                    Object read = dataInput.readObject();
+                    if (read instanceof ItemStack) {
+                        items.add((ItemStack) read);
+                    }
+                } catch (Exception e) {
+                }
             }
 
         } catch (Exception e) {
-            plugin.getLogger().severe("Failed to deserialize items: " + e.getMessage());
         }
 
         return items;
