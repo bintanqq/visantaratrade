@@ -14,9 +14,6 @@ settings:
   # How long trade requests last before expiring (in seconds)
   request-expiry-seconds: 30
 
-  # Money increment when clicking money buttons
-  money-increment: 100.0
-
   # Drop items on ground if inventory is full
   # If false, trade will be cancelled if inventory is full
   drop-items-on-full-inventory: false

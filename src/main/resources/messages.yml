@@ -56,11 +56,18 @@ trade:
   logs-prefix-trade: "&b[TRADE] "
   logs-format: "&8- {prefix}&b{time} &f{p1} &7↔ &f{p2} &b&o(Hover)"
 
+  # Hover Messages
   hover-header: "&bDetail Transaksi:"
   hover-player-gave: "&a{player} &7memberi:"
   hover-item-format: " &8• &7{amount}x {item}"
   hover-money-format: " &8• &a${money}"
   hover-nothing: "&cKosong"
+
+  # Anvil Gui System Messages
+  money-input-title: "&6Input Jumlah Uang"
+  money-error-nan: "&cHarus berupa angka!"
+  money-error-low: "&cSaldo tidak cukup!"
+  money-error-min: "&cMinimal adalah 0!"
 
   countdown: "&aTrade akan selesai dalam &b{time}s"
   reload-success: "&aKonfigurasi berhasil dimuat ulang!"

@@ -6,7 +6,7 @@
 
     <groupId>me.bintanq</groupId>
     <artifactId>VisantaraTrade</artifactId>
-    <version>1.0.0</version>
+    <version>1.3.0</version>
     <packaging>jar</packaging>
 
     <name>VisantaraTrade</name>
@@ -38,6 +38,25 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <relocations>
+                                <relocation>
+                                    <pattern>net.wesjd.anvilgui</pattern>
+                                    <shadedPattern>me.bintanq.visantaraTrade.libs.anvilgui</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

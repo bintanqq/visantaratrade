@@ -84,19 +84,21 @@ gui:
       material: GOLD_INGOT
       name: "&6&lMoney Offered: &e${amount}"
       lore:
-        - "&7Current offer in trade"
+        - "&7Current offer in this trade"
+        - ""
+        - "&eClick to change amount!"
     add-money:
       material: LIME_DYE
-      name: "&a&l+ Add Money"
+      name: "&a&lSet Money"
       lore:
-        - "&7Left-Click: &a+$100"
-        - "&7Shift-Click: &a+$1000"
+        - "&7Click to enter specific"
+        - "&7amount via Anvil."
     remove-money:
       material: RED_DYE
-      name: "&c&l- Remove Money"
+      name: "&c&lReset Money"
       lore:
-        - "&7Left-Click: &c-$100"
-        - "&7Shift-Click: &c-$1000"
+        - "&7Click to reset your"
+        - "&7money offer to $0."
     trade-info:
       material: PLAYER_HEAD
       name: "&6&lTrading with: &e{player}"

@@ -10,10 +10,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
+import net.wesjd.anvilgui.AnvilGUI;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.Collections;
 
 public class TradeSession {
 
@@ -26,6 +28,7 @@ public class TradeSession {
     private double player1Money = 0.0, player2Money = 0.0;
     private boolean player1Ready = false, player2Ready = false;
     private boolean locked = false, completed = false, isEnding = false;
+    private boolean isChangingMoney = false;
     private BukkitTask countdownTask;
 
     public TradeSession(VisantaraTrade plugin, Player player1, Player player2) {
@@ -80,6 +83,72 @@ public class TradeSession {
         resetReady();
         updateMoneyDisplay();
         plugin.getMessageManager().sendSound(player, "MONEY_CHANGE");
+    }
+
+    public void openMoneyAnvil(Player player) {
+        if (locked || completed) return;
+
+        this.isChangingMoney = true;
+
+        var msgs = plugin.getConfigManager().getMessages();
+        var mm = plugin.getMessageManager();
+
+        String title = mm.colorize(msgs.getString("trade.money-input-title", "&6Input Amount"));
+        String errorNaN = mm.colorize(msgs.getString("trade.money-error-nan", "&cAngka Saja!"));
+        String errorLow = mm.colorize(msgs.getString("trade.money-error-low", "&cSaldo Kurang!"));
+        String errorMin = mm.colorize(msgs.getString("trade.money-error-min", "&cMin 0!"));
+
+        new AnvilGUI.Builder()
+                .onClick((slot, stateSnapshot) -> {
+                    if (slot != AnvilGUI.Slot.OUTPUT) {
+                        return Collections.emptyList();
+                    }
+
+                    String text = stateSnapshot.getText();
+                    Player p = stateSnapshot.getPlayer();
+
+                    try {
+                        double amount = Double.parseDouble(text);
+                        double currentBal = plugin.getEconomy().getBalance(p);
+
+                        if (amount < 0) {
+                            return List.of(AnvilGUI.ResponseAction.replaceInputText(errorMin));
+                        }
+
+                        if (amount > currentBal) {
+                            return List.of(AnvilGUI.ResponseAction.replaceInputText(errorLow));
+                        }
+
+                        if (p.equals(player1)) player1Money = amount;
+                        else if (p.equals(player2)) player2Money = amount;
+
+                        resetReady();
+                        updateMoneyDisplay();
+                        plugin.getMessageManager().sendSound(p, "MONEY_CHANGE");
+
+                        return List.of(AnvilGUI.ResponseAction.run(() -> {
+                            this.isChangingMoney = false;
+                            p.openInventory(gui);
+                        }));
+
+                    } catch (NumberFormatException e) {
+                        return List.of(AnvilGUI.ResponseAction.replaceInputText(errorNaN));
+                    }
+                })
+                .onClose(stateSnapshot -> {
+                    Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                        if (isChangingMoney) {
+                            this.isChangingMoney = false;
+                            if (!completed && !isEnding && stateSnapshot.getPlayer().isOnline()) {
+                                stateSnapshot.getPlayer().openInventory(gui);
+                            }
+                        }
+                    }, 1L);
+                })
+                .text(String.valueOf((int)(player.equals(player1) ? player1Money : player2Money)))
+                .title(title)
+                .plugin(plugin)
+                .open(player);
     }
 
     public void setReady(Player player, boolean ready) {
@@ -291,4 +360,7 @@ public class TradeSession {
     public boolean isReady(Player p) { return p.equals(player1) ? player1Ready : player2Ready; }
     private void updateReadyButtons() { plugin.getGuiManager().updateReadyButtons(gui, player1Ready, player2Ready); }
     private void updateMoneyDisplay() { plugin.getGuiManager().updateMoneyDisplay(gui, player1Money, player2Money); }
+    public boolean isChangingMoney() {
+        return isChangingMoney;
+    }
 }

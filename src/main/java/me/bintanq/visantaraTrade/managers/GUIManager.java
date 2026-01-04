@@ -22,8 +22,10 @@ public class GUIManager {
     private List<Integer> player1Slots, player2Slots, fillerSlots;
     private int player1ReadySlot, player2ReadySlot;
     private int player1MoneySlot, player2MoneySlot;
-    private int player1AddMoneySlot, player1RemoveMoneySlot;
-    private int player2AddMoneySlot, player2RemoveMoneySlot;
+    private int player1AddMoneySlot;
+    public int player1RemoveMoneySlot;
+    private int player2AddMoneySlot;
+    public int player2RemoveMoneySlot;
     private int tradeInfoSlot;
     private int guiSize;
 
@@ -122,7 +124,7 @@ public class GUIManager {
             mat = Material.STONE;
         }
 
-        ItemStack item = new ItemStack(Material.valueOf(section.getString("material", "STONE")));
+        ItemStack item = new ItemStack(mat);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(colorize(section.getString("name", "")));
@@ -155,7 +157,11 @@ public class GUIManager {
     public boolean isFillerSlot(int s) { return fillerSlots.contains(s); }
     public boolean isReadySlot(int s) { return s == player1ReadySlot || s == player2ReadySlot; }
     public boolean isPlayer1ReadySlot(int s) { return s == player1ReadySlot; }
-    public boolean isMoneyControlSlot(int s) { return s == player1AddMoneySlot || s == player1RemoveMoneySlot || s == player2AddMoneySlot || s == player2RemoveMoneySlot; }
+    public boolean isMoneyControlSlot(int s) {
+        return s == player1AddMoneySlot || s == player1RemoveMoneySlot ||
+                s == player2AddMoneySlot || s == player2RemoveMoneySlot ||
+                s == player1MoneySlot || s == player2MoneySlot;
+    }
     public boolean isAddMoneySlot(int s) { return s == player1AddMoneySlot || s == player2AddMoneySlot; }
     public boolean isPlayer1MoneyControl(int s) { return s == player1AddMoneySlot || s == player1RemoveMoneySlot; }
     public boolean isTradeInfoSlot(int s) { return s == tradeInfoSlot; }

@@ -42,7 +42,7 @@ public class TradeListener implements Listener {
         if (e.getClick() == ClickType.SHIFT_LEFT ||
                 e.getClick() == ClickType.SHIFT_RIGHT ||
                 e.getClick() == ClickType.NUMBER_KEY ||
-                e.getClick() == ClickType.DOUBLE_CLICK) { // Tambahin Double Click buat jaga-jaga
+                e.getClick() == ClickType.DOUBLE_CLICK) {
             e.setCancelled(true);
             return;
         }
@@ -134,15 +134,19 @@ public class TradeListener implements Listener {
 
         if (isMoney) {
             if (session.isLocked()) return true;
-            boolean isP1Control = plugin.getGuiManager().isPlayer1MoneyControl(slot);
+
+            boolean isP1Control = plugin.getGuiManager().isPlayer1MoneyControl(slot) || slot == 46;
+
             if ((isP1Control && player.equals(session.getPlayer1())) ||
                     (!isP1Control && player.equals(session.getPlayer2()))) {
 
-                double amount = plugin.getConfigManager().getConfig().getDouble("settings.money-increment", 100.0);
-                if (e.isShiftClick()) amount *= 10;
-
-                if (plugin.getGuiManager().isAddMoneySlot(slot)) session.addMoney(player, amount);
-                else session.addMoney(player, -amount);
+                if (slot == plugin.getGuiManager().player1RemoveMoneySlot || slot == plugin.getGuiManager().player2RemoveMoneySlot) {
+                    if (player.equals(session.getPlayer1())) session.addMoney(player, -session.getPlayer1Money());
+                    else session.addMoney(player, -session.getPlayer2Money());
+                    plugin.getMessageManager().sendSound(player, "MONEY_CHANGE");
+                } else {
+                    session.openMoneyAnvil(player);
+                }
             }
             return true;
         }
@@ -155,6 +159,9 @@ public class TradeListener implements Listener {
         if (!(e.getPlayer() instanceof Player player)) return;
         TradeSession session = plugin.getTradeManager().getSession(player);
         if (session != null && e.getInventory().equals(session.getGui())) {
+            if (session.isChangingMoney()) {
+                return;
+            }
             if (!session.isCompleted()) {
                 ItemStack cursorItem = e.getView().getCursor();
                 if (cursorItem != null && cursorItem.getType() != Material.AIR) {

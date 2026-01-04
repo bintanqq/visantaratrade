@@ -36,7 +36,9 @@ public class TradeCommand implements CommandExecutor, TabCompleter {
 
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
             if (!player.hasPermission("visantara.trade.reload")) return noPerm(player);
+            plugin.getTradeManager().cancelAllTrades();
             plugin.getConfigManager().reloadConfigs();
+            plugin.getGuiManager().loadConfig();
             plugin.getMessageManager().send(player, "trade.reload-success");
             return true;
         }

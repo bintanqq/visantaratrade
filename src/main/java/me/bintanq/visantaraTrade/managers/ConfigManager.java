@@ -58,6 +58,10 @@ public class ConfigManager {
     public void reloadConfigs() {
         loadConfigs();
 
+        if (plugin.getGuiManager() != null) {
+            plugin.getGuiManager().loadConfig();
+        }
+
         if (plugin.getMessageManager() != null) {
             plugin.getMessageManager().reload();
         }
